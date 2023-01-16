@@ -7,12 +7,15 @@ import AddBlogForm from './components/AddBlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useDispatch } from 'react-redux'
+import { Notification2 } from './components/Notification'
+import { showNotification, clearNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const notificationRef = useRef()
   const toggleAddBlogFormRef = useRef()
+  const dispatch = useDispatch()
 
   const updateBlogList = async () => {
     const blogList = await blogService.getAll()
@@ -45,7 +48,7 @@ const App = () => {
   }
 
   const createNotification = (message, style, timeout) => {
-    notificationRef.current.createNotification(message, style, timeout)
+    dispatch(showNotification(message, style, timeout))
   }
 
   useEffect(() => {
@@ -73,7 +76,7 @@ const App = () => {
       blogService.setToken(user.token)
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       setUser(user)
-      createNotification(null)
+      dispatch(clearNotification())
     }
     catch (exception) {
       createNotification('Wrong username or password', 'error')
@@ -93,10 +96,11 @@ const App = () => {
     try {
       const createdBlog = await blogService.create(newBlog)
       toggleAddBlogFormRef.current.toggleVisibility()
-      createNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`)
+      createNotification(`A new blog ${createdBlog.title} by ${createdBlog.author}`)
       await updateBlogList()
     }
     catch (exception) {
+      console.log('exception:', exception)
       //console.log('exception:', exception)
       //note: if jwt token expiration is set, expired token exception is caught here
       //would need a more comprehensive session management system to handle that properly
@@ -109,7 +113,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        <Notification ref={notificationRef} />
+        <Notification />
         <p>{user.name} logged in <LogoutButton handleLogout={handleLogout} /></p>
 
         <Togglable buttonLabel='add blog' ref={toggleAddBlogFormRef}>
@@ -127,7 +131,7 @@ const App = () => {
   return (
     <div>
       <h1>Log in to application</h1>
-      <Notification ref={notificationRef} />
+      <Notification />
       <LoginForm handleLogin={handleLogin} />
 
     </div>
