@@ -7,8 +7,6 @@ import PropTypes from 'prop-types'
 const Blog = ({ blog, updateBlog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
   // eslint-disable-next-line no-unused-vars
-  const [likes, setLikes] = useState(null)
-
   const showWhenVisible = { display: visible ? '' : 'none' }
   const buttonLabel = visible ? 'hide' : 'view'
 
@@ -48,9 +46,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
   }
 
   const handleLikeClick = async () => {
-    blog.likes += 1
-    blog = await updateBlog(blog)
-    setLikes(blog.likes)
+    await updateBlog(blog.id)
   }
 
   const handleDeleteClick = async () => {

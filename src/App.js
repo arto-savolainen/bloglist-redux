@@ -9,14 +9,13 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { useDispatch, useSelector } from 'react-redux'
 import { showNotification, clearNotification } from './reducers/notificationReducer'
-import { updateBlogListState, likeBlog, createBlog } from './reducers/blogReducer'
+import { updateBlogListState, createBlog, likeBLog, removeBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const toggleAddBlogFormRef = useRef()
   const dispatch = useDispatch()
-  const blogs1 = useSelector(state => state.blogs)
+  const blogs = useSelector(state => state.blogs)
 
   // const updateBlogList = async () => {
   //   const blogList = await blogService.getAll()
@@ -27,28 +26,38 @@ const App = () => {
     dispatch(updateBlogListState())
   }
 
-  //this is used to update likes
-  //a more general update function could create a notification and thus require a separate implementation
-  const updateBlog = async (updateBlog) => {
-    try {
-      const updatedBlog = await blogService.update(updateBlog)
-      return updatedBlog
-    }
-    catch (exception) {
-      createNotification(`Error: ${exception.response.data.error}`, 'error')
-    }
+  const wtf = async id => {
+    likeBLog(id)
   }
 
+  //This is used to update likes
+  const updateBlog = async id => {
+    dispatch(likeBLog(id))
+  }
+
+  // const updateBlog = async likedBlog => {
+  //   dispatch(likeBlog(likedBlog))
+
+    // try {
+    //   const updatedBlog = await blogService.update(updateBlog)
+    //   return updatedBlog
+    // }
+    // catch (exception) {
+    //   createNotification(`Error: ${exception.response.data.error}`, 'error')
+    // }
+  // }
+
   const deleteBlog = async (id) => {
-    try {
-      const deletedBlog = await blogService.remove(id)
-      createNotification('Blog deleted')
-      await updateBlogList()
-      return deletedBlog
-    }
-    catch (exception) {
-      createNotification(`Error: ${exception.response.data.error}`, 'error')
-    }
+    dispatch(removeBlog(id))
+    // try {
+    //   const deletedBlog = await blogService.remove(id)
+    //   createNotification('Blog deleted')
+    //   await updateBlogList()
+    //   return deletedBlog
+    // }
+    // catch (exception) {
+    //   createNotification(`Error: ${exception.response.data.error}`, 'error')
+    // }
   }
 
   const createNotification = (message, style, timeout) => {
@@ -97,8 +106,12 @@ const App = () => {
   const handleAddBlog = async (event, newBlog) => {
     event.preventDefault()
 
-    //Notifications and error handling are now blogReducer's responsibility
+    //Notifications and error handling are now blogReducer's responsibility,
+    //because exception stack trace doesn't propagate here from dispatch.
+    //For example in case of 401 response from blogService we see:
+    //Uncaught Error: The error you provided does not contain a stack trace.
     dispatch(createBlog(newBlog))
+    toggleAddBlogFormRef.current.toggleVisibility()
 
     // try {
     //   const createdBlog = await blogService.create(newBlog)
@@ -128,7 +141,7 @@ const App = () => {
           <AddBlogForm handleAddBlog={handleAddBlog} />
         </Togglable>
 
-        {blogs1.map(blog =>
+        {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
         )}
       </div>

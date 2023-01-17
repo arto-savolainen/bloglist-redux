@@ -17,15 +17,21 @@ const slice = createSlice({
     },
     setBlogs(state, action) {
       return action.payload
+    },
+    deleteBlog(state, action) {
+      const newBlogList = state.filter(x => x.id !== action.payload)
+      return newBlogList
     }
   }
 })
 
-export const { appendBlog, like, setBlogs } = slice.actions
+export const { appendBlog, like, setBlogs, deleteBlog } = slice.actions
 
 export const updateBlogListState = () => {
   return async dispatch => {
     const blogs = await blogService.getAll()
+    //Sorting only here for now. Makes sense that blogs don't bounce around during user actions
+    blogs.sort((a, b) => b.likes - a.likes)
     dispatch(setBlogs(blogs))
   }
 }
@@ -35,6 +41,7 @@ export const createBlog = blog => {
     try {
       const newBlog = await blogService.create(blog)
       dispatch(appendBlog(newBlog))
+      dispatch(showNotification(`A new blog ${newBlog.title} by ${newBlog.author}`))
     }
     catch (exception) {
       //Feels like showing notifications should be done on the caller's side in App
@@ -47,8 +54,27 @@ export const createBlog = blog => {
 export const likeBLog = id => {
   return async (dispatch, getState) => {
     const blog = getState().blogs.find(x => x.id === id)
-    await blogService.update({ ...blog, likes: blog.likes + 1 })
-    dispatch(like(id))
+    try {
+      await blogService.update({ ...blog, likes: blog.likes + 1 })
+      dispatch(like(id))
+    }
+    catch (exception) {
+      dispatch(showNotification(`Error: ${exception.response.data.error}`, 'error'))
+    }
+  }
+}
+
+export const removeBlog = id => {
+  return async dispatch => {
+    try {
+      await blogService.remove(id)
+      dispatch(deleteBlog(id))
+      dispatch(showNotification('Blog deleted'))
+    }
+    catch (exception) {
+      dispatch(showNotification(`Error: ${exception.response.data.error}`, 'error'))
+    }
+    
   }
 }
 
