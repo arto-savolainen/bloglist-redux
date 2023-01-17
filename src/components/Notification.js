@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 const Notification = () => {
   const notification = useSelector(state => state.notification.message)
   const notificationStyle = useSelector(state => state.notification.style)
+  
   if (notification === null) { return null }
 
   let notificationCss

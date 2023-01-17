@@ -12,7 +12,6 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
   const showWhenVisible = { display: visible ? '' : 'none' }
   const buttonLabel = visible ? 'hide' : 'view'
 
-  //css could, more properly, be imported from a file. not going to bother here for now
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,

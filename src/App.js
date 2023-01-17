@@ -7,24 +7,28 @@ import AddBlogForm from './components/AddBlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useDispatch } from 'react-redux'
-import { Notification2 } from './components/Notification'
+import { useDispatch, useSelector } from 'react-redux'
 import { showNotification, clearNotification } from './reducers/notificationReducer'
+import { updateBlogListState, likeBlog, createBlog } from './reducers/blogReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const toggleAddBlogFormRef = useRef()
   const dispatch = useDispatch()
+  const blogs1 = useSelector(state => state.blogs)
 
+  // const updateBlogList = async () => {
+  //   const blogList = await blogService.getAll()
+  //   blogList.sort((a, b) => b.likes - a.likes)
+  //   setBlogs(blogList)
+  // }
   const updateBlogList = async () => {
-    const blogList = await blogService.getAll()
-    blogList.sort((a, b) => b.likes - a.likes)
-    setBlogs(blogList)
+    dispatch(updateBlogListState())
   }
 
   //this is used to update likes
-  //a more general update function would create a notification and thus require a separate implementation
+  //a more general update function could create a notification and thus require a separate implementation
   const updateBlog = async (updateBlog) => {
     try {
       const updatedBlog = await blogService.update(updateBlog)
@@ -93,20 +97,23 @@ const App = () => {
   const handleAddBlog = async (event, newBlog) => {
     event.preventDefault()
 
-    try {
-      const createdBlog = await blogService.create(newBlog)
-      toggleAddBlogFormRef.current.toggleVisibility()
-      createNotification(`A new blog ${createdBlog.title} by ${createdBlog.author}`)
-      await updateBlogList()
-    }
-    catch (exception) {
-      console.log('exception:', exception)
-      //console.log('exception:', exception)
-      //note: if jwt token expiration is set, expired token exception is caught here
-      //would need a more comprehensive session management system to handle that properly
-      //for now, user is required to logout and log back in if token is expired
-      createNotification(`Error: ${exception.response.data.error}`, 'error')
-    }
+    //Notifications and error handling are now blogReducer's responsibility
+    dispatch(createBlog(newBlog))
+
+    // try {
+    //   const createdBlog = await blogService.create(newBlog)
+    //   toggleAddBlogFormRef.current.toggleVisibility()
+    //   createNotification(`A new blog ${createdBlog.title} by ${createdBlog.author}`)
+    //   await updateBlogList()
+    // }
+    // catch (exception) {
+    //   console.log('exception:', exception)
+    //   //console.log('exception:', exception)
+    //   //note: if jwt token expiration is set, expired token exception is caught here
+    //   //would need a more comprehensive session management system to handle that properly
+    //   //for now, user is required to logout and log back in if token is expired
+    //   createNotification(`Error: ${exception.response.data.error}`, 'error')
+    // }
   }
 
   if (user !== null) {
@@ -121,7 +128,7 @@ const App = () => {
           <AddBlogForm handleAddBlog={handleAddBlog} />
         </Togglable>
 
-        {blogs.map(blog =>
+        {blogs1.map(blog =>
           <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
         )}
       </div>
