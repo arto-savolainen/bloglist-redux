@@ -14,6 +14,7 @@ const LoginForm = ({ handleLogin }) => {
           type="text"
           value={username}
           name="Username"
+          autoComplete="username"
           onChange={({ target }) => setUsername(target.value)}
         />
       </div>
@@ -24,6 +25,7 @@ const LoginForm = ({ handleLogin }) => {
           type="password"
           value={password}
           name="Password"
+          autoComplete="current-password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>

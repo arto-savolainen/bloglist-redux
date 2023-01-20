@@ -44,8 +44,7 @@ export const createBlog = blog => {
       dispatch(showNotification(`A new blog ${newBlog.title} by ${newBlog.author}`))
     }
     catch (exception) {
-      //Feels like showing notifications should be done on the caller's side in App
-      //But the exception doesn't propagate there, so that responsibility is now here
+      //This exception doesn't propagate to caller properly, so notification responsibility is now here
       dispatch(showNotification(`Error: ${exception.response.data.error}`, 'error'))
     }
   }
@@ -72,7 +71,7 @@ export const removeBlog = id => {
       dispatch(showNotification('Blog deleted'))
     }
     catch (exception) {
-      dispatch(showNotification(`Error: ${exception.response.data.error}`, 'error'))
+      dispatch(showNotification('Error: Not authorized', 'error'))
     }
     
   }
