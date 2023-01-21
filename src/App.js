@@ -8,6 +8,7 @@ import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom"
 import BlogList from './components/BlogList'
 import UserList from './components/UserList'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = () => {
   const user = useSelector(state => state.currentUser)
@@ -36,8 +37,11 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<BlogList />} />
+          <Route path="/blogs" element={<BlogList />} />
           <Route path="/users" element={<UserList />} />
           <Route path="/users/:id" element={<User />} />
+          <Route path="/blogs/:id" element={<Blog />} />
+          <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </div>
     )

@@ -4,19 +4,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import AddBlogForm from './AddBlogForm'
 import { updateBlogListState, createBlog, likeBLog, removeBlog } from '../reducers/blogReducer'
+import { Link } from 'react-router-dom'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
   const toggleAddBlogFormRef = useRef()
   const dispatch = useDispatch()
 
-  //This is used to update likes
-  const updateBlog = id => {
-    dispatch(likeBLog(id))
-  }
-
-  const deleteBlog = id => {
-    dispatch(removeBlog(id))
+  const blogRowStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    paddingBottom: 1,
+    border: 'solid',
+    borderWidth: 1.5,
+    marginBottom: 5
   }
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const BlogList = () => {
       </Togglable>
 
       {blogs ? blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />) : null
+        <div key={blog.id} style={blogRowStyle}><Link to={`/blogs/${blog.id}`}>{blog.title}</Link></div>) : null
       }
     </div>
   )
