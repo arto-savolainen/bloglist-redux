@@ -1,61 +1,36 @@
 import { createSlice } from '@reduxjs/toolkit'
-import loginService from '../services/login'
-import blogService from '../services/blogs'
-import { showNotification, clearNotification } from './notificationReducer'
+import userService from '../services/users'
+import { showNotification } from './notificationReducer'
 
-const initialState = null
+const initialState = []
 
 const slice = createSlice({
-  name: 'user',
+  name: 'users',
   initialState,
   reducers: {
-    login(state, action) {
+    setUsers(state, action) {
       return action.payload
-    },
-    logout(state, action) {
-      return null
     }
   }
 })
 
-export const { login, logout } = slice.actions
+export const { setUsers } = slice.actions
 
-export const loginUser = (username, password) => {
+export const updateUserListState = () => {
   return async dispatch => {
     try {
-      const user = await loginService.login({
-        username, password,
-      })
-
-      window.localStorage.setItem('loggedUser', JSON.stringify(user))
-      dispatch(login(user))
-      blogService.setToken(user.token)
-      dispatch(clearNotification())
+      const users = await userService.getAll()
+      
+      //Sort according to number of blogs created by user
+      if (users) {
+        users.sort((a, b) => b.blogs.length - a.blogs.length)
+        dispatch(setUsers(users))
+      }
     }
-    catch (exception) {
-      dispatch(showNotification('Wrong username or password', 'error'))
+    catch {
+      dispatch(showNotification(`Error: ${exception.response.data.error}`, 'error'))
     }
-  }
-}
 
-export const getUserFromLocalStorageAndLogin = () => {
-  return async dispatch => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser')
-
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      dispatch(login(user))
-      blogService.setToken(user.token)
-    }
-  }
-}
-
-export const logoutUser = () => {
-  return async (dispatch, getState) => {
-    window.localStorage.removeItem('loggedUser')
-    dispatch(logout())
-    blogService.setToken(null)
-    dispatch(showNotification('You have logged out'))
   }
 }
 

@@ -71,7 +71,7 @@ export const removeBlog = id => {
       dispatch(showNotification('Blog deleted'))
     }
     catch (exception) {
-      dispatch(showNotification('Error: Not authorized', 'error'))
+      dispatch(showNotification(`Error: ${exception.response.data.error}`, 'error'))
     }
     
   }
