@@ -8,6 +8,16 @@ const Blog = () => {
   const dispatch = useDispatch()
   const match = useMatch('blogs/:id')
   const blog = match ? blogs.find(x => x.id === match.params.id) : null
+  let bloglink = ''
+
+  if (blog) {
+    bloglink = [...blog.url].join('')
+
+    //Prepend https:// to blog urls in case it's not there
+    if (!bloglink.startsWith('http')) {
+      bloglink = 'https://' + bloglink
+    }
+  }
 
   const deleteBlogButtonStyle = {
     display: 'inline-block',
@@ -24,18 +34,9 @@ const Blog = () => {
     backgroundColor: '#e05353'
   }
 
-    //This is used to update likes
-    const updateBlog = id => {
-      dispatch(likeBLog(id))
-    }
-  
-    const deleteBlog = id => {
-      dispatch(removeBlog(id))
-    }
-  
-    useEffect(() => {
-      dispatch(updateBlogListState())
-    }, [])
+  useEffect(() => {
+    dispatch(updateBlogListState())
+  }, [])
 
   const handleLikeClick = () => {
     dispatch(likeBLog(blog.id))
@@ -54,10 +55,10 @@ const Blog = () => {
   return (
     <div>
       <h1 id='blog-title'>{blog.title} | {blog.author ? blog.author : 'Unknown author'}</h1>
-        <div id='blog-url'><a href={blog.url} target="_blank" rel="noopener noreferrer">{blog.url}</a></div>
-        <div id='blog-likes'>{blog.likes} <button id='like-button' onClick={handleLikeClick}>like</button></div>
-        <div id='blog-user'>added by {blog.user ? blog.user.name : 'Unknown user'}</div>
-        <button id='delete-blog-button' style={deleteBlogButtonStyle} onClick={handleDeleteClick}>delete blog</button>
+      <div id='blog-url'><a href={bloglink} target="_blank" rel="noopener noreferrer">{blog.url}</a></div>
+      <div id='blog-likes'>{blog.likes} <button id='like-button' onClick={handleLikeClick}>like</button></div>
+      <div id='blog-user'>added by {blog.user ? blog.user.name : 'Unknown user'}</div>
+      <button id='delete-blog-button' style={deleteBlogButtonStyle} onClick={handleDeleteClick}>delete blog</button>
     </div>
   )
 }
