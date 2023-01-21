@@ -5,8 +5,9 @@ import LogoutButton from './components/LogoutButton'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser, getUserFromLocalStorageAndLogin, logoutUser } from './reducers/loginReducer'
 import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom"
-import BlogView from './components/BlogView'
-import UserView from './components/UserView'
+import BlogList from './components/BlogList'
+import UserList from './components/UserList'
+import User from './components/User'
 
 const App = () => {
   const user = useSelector(state => state.currentUser)
@@ -26,38 +27,17 @@ const App = () => {
     dispatch(logoutUser())
   }
 
-  // if (user !== null) {
-  //   return (
-  //     <div>
-        // <h2>blogs</h2>
-        // <Notification />
-        // <p>{user.name} logged in <LogoutButton handleLogout={handleLogout} /></p>
-
-       
-
-  //       <Togglable buttonLabel='add blog' ref={toggleAddBlogFormRef}>
-  //         <h2>create new</h2>
-  //         <AddBlogForm handleAddBlog={handleAddBlog} />
-  //       </Togglable>
-
-  //       {blogs.map(blog =>
-  //         <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />
-  //       )}
-
-  //     </div>
-  //   )
-  // }
-
   if (user !== null) {
     return (
       <div>
-      <h2>Blogs</h2>
+        <h2>Blogs</h2>
         <Notification />
         <p>{user.name} logged in <LogoutButton handleLogout={handleLogout} /></p>
 
         <Routes>
-          <Route path="/" element={<BlogView />} />
-          <Route path="/users" element={<UserView />} /> 
+          <Route path="/" element={<BlogList />} />
+          <Route path="/users" element={<UserList />} />
+          <Route path="/users/:id" element={<User />} />
         </Routes>
       </div>
     )

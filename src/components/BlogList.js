@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 import AddBlogForm from './AddBlogForm'
 import { updateBlogListState, createBlog, likeBLog, removeBlog } from '../reducers/blogReducer'
 
-const BlogView = () => {
+const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
   const toggleAddBlogFormRef = useRef()
   const dispatch = useDispatch()
@@ -48,4 +48,4 @@ const BlogView = () => {
   )
 }
 
-export default BlogView
+export default BlogList
