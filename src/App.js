@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
-import LogoutButton from './components/LogoutButton'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser, getUserFromLocalStorageAndLogin, logoutUser } from './reducers/loginReducer'
 import { Routes, Route, Link, useMatch, useNavigate } from "react-router-dom"
@@ -9,6 +8,7 @@ import BlogList from './components/BlogList'
 import UserList from './components/UserList'
 import User from './components/User'
 import Blog from './components/Blog'
+import Menu from './components/Menu'
 
 const App = () => {
   const user = useSelector(state => state.currentUser)
@@ -31,9 +31,10 @@ const App = () => {
   if (user !== null) {
     return (
       <div>
-        <h2>Blogs</h2>
+        <Menu username={user.name} handleLogout={handleLogout}/>
+        <h2>blog app</h2>
         <Notification />
-        <p>{user.name} logged in <LogoutButton handleLogout={handleLogout} /></p>
+        <p></p>
 
         <Routes>
           <Route path="/" element={<BlogList />} />
