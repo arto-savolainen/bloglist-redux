@@ -29,6 +29,7 @@ export const loginUser = (username, password) => {
 
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       dispatch(login(user))
+      blogService.setToken(user.token)
       dispatch(clearNotification())
     }
     catch (exception) {
@@ -44,6 +45,7 @@ export const getUserFromLocalStorageAndLogin = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       dispatch(login(user))
+      blogService.setToken(user.token)
     }
   }
 }
@@ -52,6 +54,7 @@ export const logoutUser = () => {
   return async (dispatch, getState) => {
     window.localStorage.removeItem('loggedUser')
     dispatch(logout())
+    blogService.setToken(null)
     dispatch(showNotification('You have logged out'))
   }
 }

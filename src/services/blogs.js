@@ -1,5 +1,5 @@
 import axios from 'axios'
-import store from '../store'
+//import store from '../store'
 const baseUrl = '/api/blogs'
 
 let token = null
@@ -14,7 +14,7 @@ const setToken = newToken => {
 }
 
 const checkToken = () => {
-  const user = store.getState().user
+  //const user = store.getState().user
   if (user) {
     setToken(user.token)
   }
@@ -26,7 +26,7 @@ const getAll = async () => {
 }
 
 const create = async (blog) => {
-  checkToken()
+  //checkToken()
   const response = await axios.post(baseUrl, blog, {
     headers: {
       Authorization: token
@@ -41,7 +41,7 @@ const update = async (updateBlog) => {
 }
 
 const remove = async (id) => {
-  checkToken()
+  //checkToken()
   const response = await axios.delete(`${baseUrl}/${id}`, {
     headers: {
       Authorization: token
